@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dserver-minimal"
+description = "Meta-package for installing a minimal working dserver consisting of dtool-lookup-server, dserver-search-plugin-mongo, and dserver-retrieve-plugin-mongo"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Tjelvar Olsson", email = "tjelvar.olsson@gmail.com"},
+    {name = "Johannes L. Hörmann", email = "johannes.laurin@gmail.com"}
+]
+dependencies = [
+      "dtool-lookup-server",
+      "dserver-search-plugin-mongo",
+      "dserver-retrieve-plugin-mongo",
+    ]
+version = "0.1.0"
+
+[project.urls]
+Repository = "https://github.com/livMatS/dserver-minimal"

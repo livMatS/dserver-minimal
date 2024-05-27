@@ -10,10 +10,8 @@ ENV FLASK_APP=dtool_lookup_server
 
 RUN pip install -U pip  && \
     pip install gunicorn  psycopg2 setuptools_scm && \
-    pip install -r requirements.txt && \
+    pip install . \
     pip install dtool-cli dtool-info dtool-create dtool-s3 && \
-    pip install git+https://github.com/livMatS/dserver-retrieve-plugin-mongo.git@main && \
-    pip install git+https://github.com/livMatS/dserver-search-plugin-mongo.git@main && \
     pip install git+https://github.com/livMatS/dserver-direct-mongo-plugin.git@main && \
     pip install git+https://github.com/livMatS/dserver-dependency-graph-plugin.git@main && \
     pip install git+https://github.com/livMatS/dserver-notification-plugin.git@main && \

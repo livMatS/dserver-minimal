@@ -10,5 +10,6 @@ dserver_minimal/version.py
 .tox/*
 dist/*
 venv/*
+build/*
 
 .idea/*

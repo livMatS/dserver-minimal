@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=42", "setuptools_scm[toml]>=6.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,11 +11,20 @@ authors = [
     {name = "Johannes L. Hörmann", email = "johannes.laurin@gmail.com"}
 ]
 dependencies = [
-      "dtool-lookup-server",
-      "dserver-search-plugin-mongo",
-      "dserver-retrieve-plugin-mongo",
+      "dtool-lookup-server @ git+https://github.com/jic-dtool/dtool-lookup-server.git#master",
+      "dserver-search-plugin-mongo @ git+https://github.com/livMatS/dserver-search-plugin-mongo.git#main",
+      "dserver-retrieve-plugin-mongo @ git+https://github.com/livMatS/dserver-retrieve-plugin-mongo.git#main",
     ]
-version = "0.1.0"
+dynamic = ["version"]
 
 [project.urls]
+Documentation = "https://dserver-minimal.readthedocs.io"
 Repository = "https://github.com/livMatS/dserver-minimal"
+
+[tool.setuptools]
+packages = ["dserver_minimal"]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
+write_to = "dserver_minimal/version.py"

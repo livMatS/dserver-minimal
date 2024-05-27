@@ -1,25 +1,14 @@
-dtool_lookup_server/version.py
-app.db
-TODO.rst
-.coverage
+dserver_minimal/version.py
 
 *.swp
 *.pyc
 *.egg-info
 *.pdf
 
-test_rsa*
-migrations/*
-data/*
-env*
 .cache/*
 .pytest_cache/*
 .tox/*
 dist/*
-keys/*
 venv/*
-old-provision/*
-jwt-spike/*
-keys/*
 
 .idea/*

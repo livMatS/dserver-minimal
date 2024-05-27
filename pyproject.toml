@@ -17,6 +17,13 @@ dependencies = [
     ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinxcontrib-spelling",
+]
+
 [project.urls]
 Documentation = "https://dserver-minimal.readthedocs.io"
 Repository = "https://github.com/livMatS/dserver-minimal"
@@ -28,3 +35,4 @@ packages = ["dserver_minimal"]
 version_scheme = "guess-next-dev"
 local_scheme = "no-local-version"
 write_to = "dserver_minimal/version.py"
+

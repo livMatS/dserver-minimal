@@ -37,3 +37,8 @@ html_static_path = ['_static']
 # spell check with sphinxcontrib.spelling
 spelling_lang = 'en_US'
 spelling_show_suggestions = True
+
+# bibliography with sphinxcontrib.bibtex
+bibtex_bibfiles = ['refs.bib']
+bibtex_default_style = 'unsrt'
+bibtex_reference_style = 'label'

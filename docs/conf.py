@@ -6,9 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'dserver-minimal'
-copyright = '2024, Johannes L. Hörmann'
-author = 'Johannes L. Hörmann'
+project = 'dserver'
+copyright = '2024, Tjelvar S. G. Olsson, Johannes L. Hörmann, Lars Pastewka, Luis Yanes, Matthew Hartley'
+author = 'Tjelvar S. G. Olsson, Johannes L. Hörmann, Lars Pastewka, Luis Yanes, Matthew Hartley'
 
 import dserver_minimal
 version = dserver_minimal.__version__
@@ -19,6 +19,7 @@ release = dserver_minimal.__version__
 
 extensions = [
     'sphinxcontrib.spelling',
+    'sphinxcontrib.bibtex',
     'myst_parser'
 ]
 

@@ -12,6 +12,7 @@ Overview
 
    self
    readme
+   story
    development
 
 

@@ -27,7 +27,7 @@ docs = [
 ]
 
 [project.urls]
-Documentation = "https://dserver-minimal.readthedocs.io"
+Documentation = "https://dserver.readthedocs.io"
 Repository = "https://github.com/livMatS/dserver-minimal"
 
 [tool.setuptools]

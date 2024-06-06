@@ -131,6 +131,8 @@ suffix ``s3://some-bucket/1a1f9fad-8589-413e-9602-5bbd66bfe675``.
 
 The generic scheme of a dataset URI hence adheres to
 
+.. code-block::
+
     {scheme}://{storage_endpoint_name}/{localized_dataset_id}
 
 Encouraging, not enforcing standardised metadata
@@ -142,7 +144,7 @@ funding body information.”*
 
 This is achieved by distributing README.yml templates such as
 
-.. code-block::yaml
+.. code-block:: yaml
 
     project: Project name
     description: Project description

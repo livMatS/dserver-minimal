@@ -1,5 +1,7 @@
 # dserver-minimal
 
+[![https://github.com/livMatS/dserver-minimal/blob/main/icons/22x22/dtool_logo.png?raw=True)](https://github.com/livMatS/dserver-minimal) [![https://img.shields.io/pypi/v/dserver-minimal](https://pypi.org/project/dserver-minimal/)] [![https://img.shields.io/github/v/tag/livMatS/dserver-minimal](https://github.com/livMatS/dserver-minimal/tags]
+
 *dserver-minimal* is a meta package that provides a minimal working dserver
 installation consisting of the core component [dtool-lookup-server](https://github.com/jic-dtool/dtool-lookup-server),
 together with MongoDB-based search and retrieve plugin implementations

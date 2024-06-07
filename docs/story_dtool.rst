@@ -21,7 +21,7 @@ creation, or file sizes) and descriptive (such as experimental
 conditions or simulation parameters) metadata in machine-processable
 plain text formats such as JavaScript Object Notation (JSON) :cite:p:`bray2017javascript` and `Yet Another Markup
 Language (YAML)`_. A
-dataset’s README.yml file contains descriptive metadata that should be
+dataset’s ``README.yml`` file contains descriptive metadata that should be
 formatted as machine-processable YAML. Plain text is not strictly
 forbidden, but the file extension strongly encourages the use of YAML. A
 dataset’s *manifest* holds structural metadata on all files contained

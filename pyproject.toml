@@ -12,9 +12,9 @@ authors = [
     {name = "Johannes L. Hörmann", email = "johannes.laurin@gmail.com"}
 ]
 dependencies = [
-      "dtool-lookup-server @ git+https://github.com/jic-dtool/dtool-lookup-server.git#master",
-      "dserver-search-plugin-mongo @ git+https://github.com/livMatS/dserver-search-plugin-mongo.git#main",
-      "dserver-retrieve-plugin-mongo @ git+https://github.com/livMatS/dserver-retrieve-plugin-mongo.git#main",
+      "dtool-lookup-server",
+      "dserver-search-plugin-mongo",
+      "dserver-retrieve-plugin-mongo",
     ]
 dynamic = ["version"]
 

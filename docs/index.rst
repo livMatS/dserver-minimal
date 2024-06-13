@@ -13,3 +13,4 @@
    self
    story
    development
+   changelog

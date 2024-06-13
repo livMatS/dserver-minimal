@@ -11,5 +11,6 @@ dserver_minimal/version.py
 dist/*
 venv/*
 build/*
+migrations/*
 
 .idea/*

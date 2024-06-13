@@ -6,7 +6,7 @@ COPY --chown=dserver . /app
 
 WORKDIR /app
 
-ENV FLASK_APP=dtool_lookup_server
+ENV FLASK_APP=dservercore
 
 RUN pip install -U pip  && \
     pip install gunicorn  psycopg2 setuptools_scm && \

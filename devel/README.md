@@ -68,7 +68,7 @@ Alternatively, install `dserver`'s core as well as search and retrieve plugins
 individually, e.g.
 
 ```bash
-pip install dtool-lookup-server
+pip install dservercore
 pip install dserver-search-plugin-mongo
 pip install dserver-retrieve-plugin-mongo
 ```
@@ -87,12 +87,12 @@ For development purposes, you might want to install these core components and
 plugins listed above in editable mode from local copies of the repositories, i.e.
 
 ```bash
-git clone https://github.com/jic-dtool/dtool-lookup-server.git
-cd dtool-lookup-server
+git clone https://github.com/jic-dtool/dservercore.git
+cd dservercore
 pip install -e .
 ```
 
-for `dtool-lookup-server`, and in similar fashion for the plugins.
+for `dservercore`, and in similar fashion for the plugins.
 
 `env.rc` provides a default flask app configuration
 in form of environment variables. Inspect and modify as needed, and export

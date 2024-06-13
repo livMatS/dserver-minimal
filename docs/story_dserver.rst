@@ -502,7 +502,7 @@ tailor-made plugins.
     :alt: abstract base classes
 
 Figure 1: UML diagram of abstract base classes in the
-*dtool-lookup-server* Python package and a few examples of plugin
+*dservercore* Python package and a few examples of plugin
 implementations in other packages. Adhering to UML notation conventions,
 tabbed frames define modules. Classes are blocks of three stacked
 segments: class name, attributes, and methods. Virtual methods are

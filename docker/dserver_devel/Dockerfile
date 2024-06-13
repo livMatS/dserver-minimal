@@ -12,9 +12,9 @@ RUN pip install -U pip  && \
     pip install gunicorn  psycopg2 setuptools_scm && \
     pip install . \
     pip install dtool-cli dtool-info dtool-create dtool-s3 && \
-    pip install git+https://github.com/livMatS/dserver-direct-mongo-plugin.git@main && \
-    pip install git+https://github.com/livMatS/dserver-dependency-graph-plugin.git@main && \
-    pip install git+https://github.com/livMatS/dserver-notification-plugin.git@main && \
+    pip install dserver-direct-mongo-plugin && \
+    pip install dserver-dependency-graph-plugin && \
+    pip install dserver-notification-plugin.git && \
     rm -rf /root/.cache/pip
 
 COPY docker/dserver_devel/dtool.json /home/dserver/.config/dtool/

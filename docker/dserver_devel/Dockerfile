@@ -18,7 +18,7 @@ RUN apt-get --yes update && \
     pip install dserver-dependency-graph-plugin && \
     pip install dserver-notification-plugin && \
     rm -rf /root/.cache/pip && \
-    apt-get remove --purge --autoremove -y gcc git && \
+    apt-get remove --purge --autoremove -y gcc && \
     rm -rf /var/lib/apt/lists/*
 
 

@@ -24,7 +24,7 @@ docs = [
     "sphinx_rtd_theme",
     "sphinxcontrib-spelling",
     "sphinxcontrib-bibtex",
-    "myst-parser==4.0.0"
+    "myst-parser==4.0.1"
 ]
 
 [project.urls]

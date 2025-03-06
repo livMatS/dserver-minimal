@@ -10,6 +10,7 @@ echo "-> Listing dtool datasets"
 
 # Define the local data directory
 DATA_DIR="/tmp/data"
+mkdir -p ${DATA_DIR}
 
 # Add datasets if there are less than two in the system
 if [ $(dtool ls "file://$DATA_DIR" | wc -l) -lt "4" ]; then

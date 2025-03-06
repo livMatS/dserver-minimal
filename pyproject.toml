@@ -12,7 +12,7 @@ authors = [
     {name = "Johannes L. Hörmann", email = "johannes.laurin@gmail.com"}
 ]
 dependencies = [
-      "dservercore>=0.21.0",
+      "dservercore @ git+https://github.com/jic-dtool/dservercore.git@2025-02-27-dependency-fixes",
       "dserver-search-plugin-mongo>=0.4.0",
       "dserver-retrieve-plugin-mongo>=0.4.0",
     ]

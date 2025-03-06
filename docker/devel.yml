@@ -31,6 +31,8 @@ services:
       - MONGO_COLLECTION=metadata
       - JWT_PUBLIC_KEY_FILE=/keys/jwt_key.pub
       - JWT_PRIVATE_KEY_FILE=/keys/jwt_key
+      - DISABLE_JWT_AUTHORISATION=True
+      - DEFAULT_USER=test-user
       - DUMP_HTTP_REQUESTS=True
       - LOGLEVEL=DEBUG
     ports:

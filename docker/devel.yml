@@ -80,12 +80,12 @@ services:
         source: ./volumes/webapp/dtool-templates
         target: /app/dtool-lookup-webapp/public/data/templates
         read_only: true
-      - type: volume
-        source: cert_data
-        target: /certs
-        read_only: true
+      #- type: volume
+        # source: cert_data
+        #target: /certs
+        #read_only: true
     healthcheck:
-      test: ["CMD", "curl", "--insecure", "-f", "https://localhost:443"]
+      test: ["CMD", "curl", "--insecure", "-f", "http://localhost:443"]
       interval: 30s
       timeout: 20s
       retries: 3

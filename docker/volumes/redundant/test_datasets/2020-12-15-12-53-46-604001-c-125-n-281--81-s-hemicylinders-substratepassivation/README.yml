@@ -1,0 +1,129 @@
+creation_date: '2020-12-15 12:53:26.678060'
+datetime: '2020-12-15 12:53:46.604101'
+derived_from:
+- {name: 2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+  uri: file://jwlogin04.juwels/p/project/chfr13/hoermann4/dtool/DATASETS/2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+  uuid: 753ab2de-5595-43d5-9c5a-ba601cb57cbf}
+description: SDS on Au(111) substrate passivation trial
+expiration_date: '2022-12-15 12:53:26.678060'
+files_in_info:
+  data_file:
+    file_name: default.lammps
+    metadata_dtool_source_key: system->substrate
+    metadata_fw_dest_key: metadata->system->substrate
+    metadata_fw_source_key: metadata->system->substrate
+    query: {uuid: b5774404-e151-4398-bda9-36eb523a0ae7}
+funders:
+- {code: chfr13, organization: Gauss Centre for Supercomputing e.V. (www.gauss-centre.eu),
+  program: John von Neumann Institute for Computing (NIC) project on the GCS Supercomputer
+    JUWELS at Jülich Supercomputing Centre (JSC)}
+- {organization: University of Freiburg, program: Haushaltsstelle}
+machine: juwels
+mode: production
+owners:
+- {email: johannes.hoermann@imtek.uni-freiburg.de, name: Johannes Laurin Hörmann,
+  orcid: 0000-0001-5867-695X, username: fr_jh1130}
+parameter_label_key_dict: {c: system->surfactant->surface_concentration, m: system->counterion->nmolecules,
+  n: system->surfactant->nmolecules, s: system->surfactant->aggregates->shape}
+parameter_values:
+- {c: 0.25, m: 56, n: 56, s: monolayer}
+- {c: 0.25, m: 56, n: 56, s: hemicylinders}
+- {c: 0.5, m: 112, n: 112, s: monolayer}
+- {c: 0.5, m: 112, n: 112, s: hemicylinders}
+- {c: 0.75, m: 169, n: 169, s: monolayer}
+- {c: 0.75, m: 169, n: 169, s: hemicylinders}
+- {c: 1.0, m: 225, n: 225, s: monolayer}
+- {c: 1.0, m: 225, n: 225, s: hemicylinders}
+- {c: 1.25, m: 281, n: 281, s: monolayer}
+- {c: 1.25, m: 281, n: 281, s: hemicylinders}
+- {c: 1.5, m: 338, n: 338, s: monolayer}
+- {c: 1.5, m: 338, n: 338, s: hemicylinders}
+- {c: 1.75, m: 394, n: 394, s: monolayer}
+- {c: 1.75, m: 394, n: 394, s: hemicylinders}
+project: 2020-12-14-sds-on-au-111-substrate-passivation
+project_id: 2020-12-14-sds-on-au-111-substrate-passivation
+step: SubstratePassivation:HemicylindricalPackingAndEquilibartion:GromacsMinimizationEquilibrationRelaxation:GromacsEnergyMinimizationAfterSolvation:push_dtool
+step_specific:
+  conversion:
+    element_to_pdb_atom_name_mapping: {Au: AU}
+    element_to_pdb_residue_name_mapping: {Au: AUM}
+    lmp_type_to_element_mapping: {'11': Au}
+  dtool_push:
+    dtool_target: /p/project/chfr13/hoermann4/dtool/DATASETS
+    local_frozen_dataset: {name: 2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+      uri: file://jwlogin04.juwels/p/scratch/chfr13/hoermann/fireworks/launchpad/launcher_2020-12-15-13-19-31-255095/2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+      uuid: 753ab2de-5595-43d5-9c5a-ba601cb57cbf}
+    local_proto_dataset: {name: 2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+      uri: file://jwlogin04.juwels/p/scratch/chfr13/hoermann/fireworks/launchpad/launcher_2020-12-15-13-19-31-255095/2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+      uuid: 753ab2de-5595-43d5-9c5a-ba601cb57cbf}
+    remote_dataset: {name: 2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+      uri: file://jwlogin04.juwels/p/project/chfr13/hoermann4/dtool/DATASETS/2020-12-15-12-53-46-599381-c-125-n-281--81-s-hemicylinders-substratepassivation,
+      uuid: 753ab2de-5595-43d5-9c5a-ba601cb57cbf}
+  packing:
+    surfactant_substrate:
+      constraints:
+        N: 3
+        cylinders:
+        - base_center: [-74.48, -49.74316666666667, 74.909]
+          length: 149.162
+          r_inner: 1.5
+          r_inner_constraint: 6.618896342799283
+          r_outer: 23.0168617961236
+          r_outer_constraint: 17.897965453324318
+        - base_center: [-74.48, 0.10450000000000159, 74.909]
+          length: 149.162
+          r_inner: 1.5
+          r_inner_constraint: 6.618896342799283
+          r_outer: 23.0168617961236
+          r_outer_constraint: 17.897965453324318
+        - base_center: [-74.48, 49.95216666666667, 74.909]
+          length: 149.162
+          r_inner: 1.5
+          r_inner_constraint: 6.618896342799283
+          r_outer: 23.0168617961236
+          r_outer_constraint: 17.897965453324318
+      tolerance: 1.5
+system:
+  box: {height: 328.2202478577067, length: 149.83592693342945, width: 149.72506052762176}
+  counterion:
+    name: NA
+    nmolecules: 281
+    reference_atom: {name: NA}
+    resname: NA
+  solvent:
+    height: 180.0
+    name: H2O
+    reference_atom: {name: OW}
+    resname: SOL
+  substrate:
+    approximate_measures: [150.0, 150.0, 150.0]
+    bounding_box:
+    - [-74.48, -74.667, -73.14]
+    - [74.682, 74.876, 73.409]
+    element: Au
+    height: 148.2202478577067
+    lattice_constant: 4.075
+    length: 149.83592693342945
+    lmp: {type: 11}
+    measures: [149.83592693342945, 149.72506052762176, 148.2202478577067]
+    name: AUM
+    natoms: 196560
+    reference_atom: {name: AU}
+    resname: AUM
+    width: 149.72506052762176
+  surfactant:
+    aggregates: {shape: hemicylinders}
+    bounding_sphere:
+      center: [1.885, 0.5449999999999999, 15.47]
+      radius: 7.758430898061799
+      radius_connector_atom: 5.639534555262516
+    connector_atom:
+      index: 2
+      position: [3.47, 0.7, 20.88]
+    head_atom: {index: 1, name: S}
+    head_group: {diameter: 2.1188963427992826}
+    name: SDS
+    nmolecules: 281
+    resname: SDS
+    surface_concentration: 1.25
+    tail_atom: {index: 39, name: C12}

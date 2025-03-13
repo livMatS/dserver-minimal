@@ -1,0 +1,1 @@
+nginx.conf here is not used. It's the default config found within docker nginx:1.21.6 and placed here only as a reference.

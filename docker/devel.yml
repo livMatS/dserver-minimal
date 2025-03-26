@@ -68,14 +68,14 @@ services:
       dockerfile: ./compose/dtool_lookup_webapp/Dockerfile
     image: jotelha/dtool-lookup-webapp
     restart: always
-    #depends_on:
-    #  dserver:
-    #    condition: service_started
+    depends_on:
+      dserver:
+        condition: service_started
     volumes:
-      - type: bind
-        source: ./volumes/webapp/nginx-templates
-        target: /etc/nginx/templates
-        read_only: true
+      #- type: bind
+      #  source: ./volumes/webapp/nginx-templates
+      #  target: /etc/nginx/templates
+      #  read_only: true
       - type: bind
         source: ./volumes/webapp/dtool-templates
         target: /app/dtool-lookup-webapp/public/data/templates

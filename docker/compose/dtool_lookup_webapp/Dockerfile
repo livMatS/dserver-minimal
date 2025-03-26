@@ -70,7 +70,11 @@ RUN set -ex \
 #
 # Checkout web GUI
 #
-RUN git clone --depth 1 https://github.com/jic-dtool/dtool-lookup-webapp.git /app
+RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livmats/dtool-lookup-webapp.git /app
+
+#RUN git clone --depth 1 https://github.com/jic-dtool/dtool-lookup-webapp.git /app
+#WORKDIR /app
+#RUN git checkout origin/2025-03-13-no-authentication
 
 WORKDIR /app/dtool-lookup-webapp
 COPY compose/dtool_lookup_webapp/docker-entrypoint.d/40-build-node-app.sh /docker-entrypoint.d/40-build-node-app.sh

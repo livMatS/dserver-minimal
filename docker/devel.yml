@@ -69,9 +69,9 @@ services:
       dockerfile: ./compose/dtool_lookup_webapp/Dockerfile
     image: jotelha/dtool-lookup-webapp
     restart: always
-    depends_on:
-      dserver:
-        condition: service_started
+    #depends_on:
+    #  dserver:
+    #    condition: service_started
     volumes:
       #- type: bind
       #  source: ./volumes/webapp/nginx-templates
@@ -91,3 +91,7 @@ services:
       timeout: 20s
       retries: 3
       start_period: 60s    
+    env_file:
+      - ./envs/dtool_lookup_webapp
+    ports:
+      - "8080:8080"

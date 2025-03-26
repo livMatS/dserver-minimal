@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # dump environment variables intended for vue app into .env file
 rm .env || true
@@ -11,3 +11,5 @@ done < <(env)
 # build application code
 npm install
 npm run build
+npm run serve
+

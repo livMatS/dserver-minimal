@@ -1,0 +1,18 @@
+{
+  "DSERVER_PASSWORD": "test_password",
+  "DSERVER_TOKEN_GENERATOR_URL": "https://web/token",
+  "DSERVER_URL": "https://web/lookup",
+  "DSERVER_USERNAME": "testuser",
+  "DSERVER_VERIFY_SSL": false,
+  "DTOOL_S3_ACCESS_KEY_ID_test-bucket": "testuser_access_key",
+  "DTOOL_S3_DATASET_PREFIX": "u/testuser/",
+  "DTOOL_S3_ENDPOINT_test-bucket": "http://s3server:9000",
+  "DTOOL_S3_SECRET_ACCESS_KEY_test-bucket": "testuser_secret_key",
+  "DTOOL_SMB_DOMAIN_test-share": "WORKGROUP",
+  "DTOOL_SMB_PASSWORD_test-share": "a-guest-needs-no-password",
+  "DTOOL_SMB_PATH_test-share": "dtool",
+  "DTOOL_SMB_SERVER_NAME_test-share": "sambaserver",
+  "DTOOL_SMB_SERVER_PORT_test-share": 445,
+  "DTOOL_SMB_SERVICE_NAME_test-share": "sambashare",
+  "DTOOL_SMB_USERNAME_test-share": "guest"
+}

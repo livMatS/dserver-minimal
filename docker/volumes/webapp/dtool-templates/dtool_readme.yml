@@ -1,0 +1,12 @@
+project: Project name
+description: Short description
+owners:
+  - name: {DTOOL_USER_FULL_NAME}
+    email: {DTOOL_USER_EMAIL}
+    username: {username}
+    orcid: Your orcid
+funders:
+  - organization: Your funding organization
+    program: Your program
+    code: Program code
+creation_date: '{date}'

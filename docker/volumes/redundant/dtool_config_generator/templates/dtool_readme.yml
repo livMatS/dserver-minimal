@@ -1,0 +1,12 @@
+project: Project name
+description: Short description
+owners:
+  - name: {{ user.name }}
+    email: {{ user.email }}
+    username: {{ user.username }}
+    orcid: {{ user.orcid }}
+funders:
+  - organization: Your funding organization
+    program: Your program
+    code: Program code
+creation_date: '{date}'

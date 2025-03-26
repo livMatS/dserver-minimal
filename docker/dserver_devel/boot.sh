@@ -26,7 +26,7 @@ if [ $(dtool ls "file://$DATA_DIR" | wc -l) -lt "4" ]; then
 EOF
     curl -k https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt > test_dataset_1/data/test_data.txt
     dtool freeze test_dataset_1
-    dtool cp test_dataset_1 "file://$DATA_DIR"
+    dtool cp test_dataset_1 "file://$HOSTNAME$DATA_DIR"
     rm -rf test_dataset_1
 
     echo "-> Creating test dataset 2"
@@ -39,11 +39,11 @@ EOF
 EOF
     curl -k https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt > test_dataset_2/data/i_am_a_text_file.txt
     dtool freeze test_dataset_2
-    dtool cp test_dataset_2 "file://$DATA_DIR"
+    dtool cp test_dataset_2 "file://$HOSTNAME$DATA_DIR"
     rm -rf test_dataset_2
 
     echo "-> Listing dtool datasets"
-    dtool ls "file://$DATA_DIR"
+    dtool ls "file://$HOSTNAME$DATA_DIR"
 
     cd /app
 fi
@@ -58,16 +58,16 @@ flask db migrate
 flask db upgrade
 
 echo "-> Register base URI..."
-flask base_uri add "file://$DATA_DIR"
+flask base_uri add "file://$HOSTNAME$DATA_DIR"
 
 echo "-> Creating test user..."
 flask user add test-user
 
 echo "-> Setting permissions for test user..."
-flask user search_permission test-user "file://$DATA_DIR"
+flask user search_permission test-user "file://$HOSTNAME$DATA_DIR"
 
 echo "-> Index base URI..."
-flask base_uri index "file://$DATA_DIR"
+flask base_uri index "file://$HOSTNAME$DATA_DIR"
 
 echo "-> Starting gunicorn..."
 exec gunicorn -b :5000 --access-logfile - --error-logfile - --log-level ${LOGLEVEL} wsgi:app

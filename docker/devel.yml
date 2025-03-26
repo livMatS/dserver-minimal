@@ -9,6 +9,7 @@ services:
       context: ..
       dockerfile: ./docker/dserver_devel/Dockerfile
     image: local_dserver
+    hostname: dserver
     depends_on:
       postgres:
         condition: service_started

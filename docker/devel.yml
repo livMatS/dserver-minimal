@@ -20,7 +20,6 @@ services:
       - key_data:/keys
     environment:
       - SQLALCHEMY_DATABASE_URI=postgresql://admin:secret12@postgres:5432/dtool
-      # - MONGO_URI=mongodb://mongo:27017/dtool_info
       - SEARCH_MONGO_URI=mongodb://mongo:27017/
       - SEARCH_MONGO_DB=dtool_info
       - SEARCH_MONGO_COLLECTION=datasets
@@ -69,28 +68,11 @@ services:
       dockerfile: ./compose/dtool_lookup_webapp/Dockerfile
     image: jotelha/dtool-lookup-webapp
     restart: always
-    #depends_on:
-    #  dserver:
-    #    condition: service_started
     volumes:
-      #- type: bind
-      #  source: ./volumes/webapp/nginx-templates
-      #  target: /etc/nginx/templates
-      #  read_only: true
       - type: bind
         source: ./volumes/webapp/dtool-templates
         target: /app/dtool-lookup-webapp/public/data/templates
-        read_only: true
-      #- type: volume
-        # source: cert_data
-        #target: /certs
-        #read_only: true
-    healthcheck:
-      test: ["CMD", "curl", "--insecure", "-f", "http://localhost:443"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-      start_period: 60s    
+        read_only: true  
     env_file:
       - ./envs/dtool_lookup_webapp
     ports:

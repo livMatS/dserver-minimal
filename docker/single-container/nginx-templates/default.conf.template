@@ -1,0 +1,16 @@
+server {
+    listen               ${NGINX_PORT};
+    server_name          ${NGINX_HOST} dserver localhost;
+
+    location /lookup {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://dserver:5000;
+    }
+
+    location / {
+        proxy_pass http://dserver:8080/;
+    }
+
+    error_page 497 http://${NGINX_HOST}:${NGINX_PORT}$request_uri;
+}

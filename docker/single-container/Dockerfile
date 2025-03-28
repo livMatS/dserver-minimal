@@ -1,14 +1,39 @@
-FROM nginx:1.21.6
+FROM nginx:1.27.4-bookworm
 
 # from node:18 Dockerfile, https://github.com/nodejs/docker-node/blob/4c8c98eaf121d6d1002a85d055d07aa91e2c9914/18/buster/Dockerfile
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 ENV NODE_VERSION 18.11.0
+ENV FLASK_APP=dservercore
 
 RUN apt-get --yes update && \
-    apt-get --no-install-recommends --yes install git gpg dirmngr gpg-agent xz-utils && \
+    apt-get --no-install-recommends --yes install gpg && \
+    curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+    gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
+   --dearmor && \
+   echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list && \
+    apt-get --yes update && \
+    apt-get --no-install-recommends --yes install mongodb-org && \
+    apt-get --no-install-recommends --yes install \
+        git dirmngr gpg-agent xz-utils \
+        gcc libc6-dev libpq-dev postgresql postgresql-client
+
+        
+
+RUN apt-get --yes update && apt-get --no-install-recommends --yes install python3 python3-pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    pip install --break-system-packages -U pip  && \
+    pip install --break-system-packages gunicorn psycopg2 setuptools_scm && \
+    pip install --break-system-packages . && \
+    pip install --break-system-packages dtool-cli dtool-info dtool-create dtool-s3 && \
+    pip install --break-system-packages dserver-direct-mongo-plugin && \
+    pip install --break-system-packages dserver-dependency-graph-plugin && \
+    pip install --break-system-packages dserver-notification-plugin && \
+    rm -rf /root/.cache/pip && \
+    apt-get remove --purge --autoremove -y gcc && \
     rm -rf /var/lib/apt/lists/*
+
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
@@ -70,13 +95,52 @@ RUN set -ex \
 #
 # Checkout web GUI
 #
-# RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livmats/dtool-lookup-webapp.git /app
 RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livmats/dtool-lookup-webapp.git /app
 
-#RUN git clone --depth 1 https://github.com/jic-dtool/dtool-lookup-webapp.git /app
-#WORKDIR /app
-#RUN git checkout origin/2025-03-13-no-authentication
+
+COPY dtool.json /home/dserver/.config/dtool/
+
+COPY docker-entrypoint.d/30-run-postgres-mongo.sh /docker-entrypoint.d/30-run-postgres-mongo.sh
+RUN chmod +x /docker-entrypoint.d/30-run-postgres-mongo.sh
+
+COPY docker-entrypoint.d/50-launch-dserver.sh /docker-entrypoint.d/50-launch-dserver.sh
+RUN chmod +x /docker-entrypoint.d/50-launch-dserver.sh
+
+RUN mkdir /keys && chown dserver /keys
 
 WORKDIR /app/dtool-lookup-webapp
-COPY single-container/docker-entrypoint.d/40-build-node-app.sh /docker-entrypoint.d/40-build-node-app.sh
+COPY docker-entrypoint.d/40-build-node-app.sh /docker-entrypoint.d/40-build-node-app.sh
 RUN chmod 775 /docker-entrypoint.d/40-build-node-app.sh
+
+
+
+# Setze die Umgebungsvariablen aus der Compose-Datei
+ENV SQLALCHEMY_DATABASE_URI=postgresql://admin:secret12@localhost:5432/dtool \
+    SEARCH_MONGO_URI=mongodb://localhost:27017/ \
+    SEARCH_MONGO_DB=dtool_info \
+    SEARCH_MONGO_COLLECTION=datasets \
+    RETRIEVE_MONGO_URI=mongodb://localhost:27017/ \
+    RETRIEVE_MONGO_DB=dtool_info \
+    RETRIEVE_MONGO_COLLECTION=datasets \
+    MONGO_URI=mongodb://localhost:27017/ \
+    MONGO_DB=dtool_info \
+    MONGO_COLLECTION=metadata \
+    JWT_PUBLIC_KEY_FILE=/keys/jwt_key.pub \
+    JWT_PRIVATE_KEY_FILE=/keys/jwt_key \
+    DISABLE_JWT_AUTHORISATION=True \
+    DEFAULT_USER=test-user \
+    DUMP_HTTP_REQUESTS=True \
+    LOGLEVEL=DEBUG \
+    MONGO_DATA_DIR=/data/db \
+    POSTGRES_PORT=5432 \
+    POSTGRES_DB=dtool \
+    POSTGRES_USER=admin \
+    POSTGRES_PASSWORD=secret12
+
+# Exponiere den Port
+EXPOSE 5000
+EXPOSE 8080
+EXPOSE 8888
+
+# Starte den Dienst (dies muss individuell an deine App angepasst werden)
+CMD ["python", "app.py"]

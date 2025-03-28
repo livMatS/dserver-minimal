@@ -12,7 +12,7 @@ RUN apt-get --yes update && \
     apt-get --no-install-recommends --yes install gcc libc6-dev libpq-dev git curl && \
     pip install -U pip  && \
     pip install gunicorn  psycopg2 setuptools_scm && \
-    pip install . && \
+    pip install --break-system-packages . && \
     pip install dtool-cli dtool-info dtool-create dtool-s3 && \
     pip install dserver-direct-mongo-plugin && \
     pip install dserver-dependency-graph-plugin && \

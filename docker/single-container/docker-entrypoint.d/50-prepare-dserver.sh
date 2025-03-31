@@ -69,5 +69,5 @@ flask user search_permission test-user "file://$HOSTNAME$DATA_DIR"
 echo "-> Index base URI..."
 flask base_uri index "file://$HOSTNAME$DATA_DIR"
 
-echo "-> Starting gunicorn..."
-exec gunicorn -b :5000 --access-logfile - --error-logfile - --log-level ${LOGLEVEL} wsgi:app
+# echo "-> Starting gunicorn..."
+# exec gunicorn -b :5000 --access-logfile - --error-logfile - --log-level ${LOGLEVEL} wsgi:app

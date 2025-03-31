@@ -102,19 +102,18 @@ RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livma
 
 COPY dtool.json /home/dserver/.config/dtool/
 
-COPY docker-entrypoint.d/30-run-postgres-mongo.sh /docker-entrypoint.d/30-run-postgres-mongo.sh
-RUN chmod +x /docker-entrypoint.d/30-run-postgres-mongo.sh
-
-COPY docker-entrypoint.d/50-launch-dserver.sh /docker-entrypoint.d/50-launch-dserver.sh
-RUN chmod +x /docker-entrypoint.d/50-launch-dserver.sh
+COPY docker-entrypoint.d/50-prepare-dserver.sh /docker-entrypoint.d/50-prepare-dserver.sh
+RUN chmod +x /docker-entrypoint.d/50-prepare-dserver.sh
 
 # RUN mkdir /keys && chown dservercore /keys
 
+COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
+
 WORKDIR /app/dtool-lookup-webapp
-COPY docker-entrypoint.d/40-build-node-app.sh /docker-entrypoint.d/40-build-node-app.sh
-RUN chmod 775 /docker-entrypoint.d/40-build-node-app.sh
+RUN npm install
+RUN npm run build
 
-
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Setze die Umgebungsvariablen aus der Compose-Datei
 ENV SQLALCHEMY_DATABASE_URI=postgresql://admin:secret12@localhost:5432/dtool \
@@ -144,5 +143,6 @@ EXPOSE 5000
 EXPOSE 8080
 EXPOSE 8888
 
+CMD ["/usr/bin/supervisord", "-n"]
 # Starte den Dienst (dies muss individuell an deine App angepasst werden)
 # CMD ["python3", "app.py"]

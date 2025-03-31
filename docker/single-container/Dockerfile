@@ -25,7 +25,7 @@ RUN apt-get --yes update && apt-get --no-install-recommends --yes install python
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     pip install --break-system-packages -U pip  && \
     pip install --break-system-packages gunicorn psycopg2 setuptools_scm && \
-    pip install --break-system-packages dservercore && \
+    pip install --break-system-packages git+https://github.com/jic-dtool/dservercore.git@2025-02-27-dependency-fixes && \
     pip install --break-system-packages dserver-search-plugin-mongo && \
     pip install --break-system-packages dserver-retrieve-plugin-mongo && \
     pip install --break-system-packages dtool-cli dtool-info dtool-create dtool-s3 && \
@@ -113,10 +113,16 @@ WORKDIR /app/dtool-lookup-webapp
 RUN npm install
 RUN npm run build
 
+RUN mkdir -p /data/db
+RUN chown mongodb:mongodb /data/db
+
+COPY wsgi.py /dserver/wsgi.py
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Setze die Umgebungsvariablen aus der Compose-Datei
-ENV SQLALCHEMY_DATABASE_URI=postgresql://admin:secret12@localhost:5432/dtool \
+ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres@localhost:5432/dtool \
     SEARCH_MONGO_URI=mongodb://localhost:27017/ \
     SEARCH_MONGO_DB=dtool_info \
     SEARCH_MONGO_COLLECTION=datasets \
@@ -135,8 +141,18 @@ ENV SQLALCHEMY_DATABASE_URI=postgresql://admin:secret12@localhost:5432/dtool \
     MONGO_DATA_DIR=/data/db \
     POSTGRES_PORT=5432 \
     POSTGRES_DB=dtool \
-    POSTGRES_USER=admin \
-    POSTGRES_PASSWORD=secret12
+    POSTGRES_USER=postgres \
+    POSTGRES_PASSWORD="" \
+    SCRIPT_NAME=/lookup \
+    API_SPEC_OPTIONS='{ \
+      "x-internal-id": "2", \
+      "servers": [ \
+        { \
+        "url": "http://localhost:8888/lookup", \
+        "description": "dserver" \
+        } \
+      ] \
+    }'
 
 # Exponiere den Port
 EXPOSE 5000

@@ -16,16 +16,18 @@ RUN apt-get --yes update && \
     apt-get --yes update && \
     apt-get --no-install-recommends --yes install mongodb-org && \
     apt-get --no-install-recommends --yes install \
-        git dirmngr gpg-agent xz-utils \
+        git dirmngr gpg-agent xz-utils supervisor \
         gcc libc6-dev libpq-dev postgresql postgresql-client
 
         
 
-RUN apt-get --yes update && apt-get --no-install-recommends --yes install python3 python3-pip && \
+RUN apt-get --yes update && apt-get --no-install-recommends --yes install python3 python3-pip python3-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     pip install --break-system-packages -U pip  && \
     pip install --break-system-packages gunicorn psycopg2 setuptools_scm && \
-    pip install --break-system-packages . && \
+    pip install --break-system-packages dservercore && \
+    pip install --break-system-packages dserver-search-plugin-mongo && \
+    pip install --break-system-packages dserver-retrieve-plugin-mongo && \
     pip install --break-system-packages dtool-cli dtool-info dtool-create dtool-s3 && \
     pip install --break-system-packages dserver-direct-mongo-plugin && \
     pip install --break-system-packages dserver-dependency-graph-plugin && \
@@ -106,7 +108,7 @@ RUN chmod +x /docker-entrypoint.d/30-run-postgres-mongo.sh
 COPY docker-entrypoint.d/50-launch-dserver.sh /docker-entrypoint.d/50-launch-dserver.sh
 RUN chmod +x /docker-entrypoint.d/50-launch-dserver.sh
 
-RUN mkdir /keys && chown dserver /keys
+# RUN mkdir /keys && chown dservercore /keys
 
 WORKDIR /app/dtool-lookup-webapp
 COPY docker-entrypoint.d/40-build-node-app.sh /docker-entrypoint.d/40-build-node-app.sh
@@ -143,4 +145,4 @@ EXPOSE 8080
 EXPOSE 8888
 
 # Starte den Dienst (dies muss individuell an deine App angepasst werden)
-CMD ["python", "app.py"]
+# CMD ["python3", "app.py"]

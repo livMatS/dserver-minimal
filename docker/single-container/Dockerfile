@@ -101,10 +101,11 @@ RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livma
 
 # RUN mkdir /keys && chown dservercore /keys
 
-COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
-
 WORKDIR /app/dtool-lookup-webapp
 RUN npm install
+
+COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
+
 RUN npm run build
 
 RUN mkdir -p /data/db

@@ -1,11 +1,27 @@
 #!/bin/sh
+
+echo "-> Set postgres password"
+
+su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
+su - postgres -c "psql -c \"CREATE DATABASE dtool;\""
+
 echo "-> Creating keys..."
 openssl genrsa -out /keys/jwt_key 2048
 openssl rsa -in /keys/jwt_key -pubout -outform PEM -out /keys/jwt_key.pub
 
-python3 -m pip install -e .
+# echo "-> Cretate databases"
+# out=$(flask db init 2>&1)
+# if [ $? -ne 0 ]; then
+#   echo $out | grep -E 'Error: Directory migrations already exists and is not empty' > /dev/null 2>&1
+#   if [ $? -ne 0 ]; then
+#     echo $out >2
+#     exit 1
+#   fi
+# fi
 
-echo "-> Listing dtool datasets"
+# python3 -m pip install -e .
+
+# echo "-> Listing dtool datasets"
 # dtool ls s3://test-bucket
 
 # Define the local data directory

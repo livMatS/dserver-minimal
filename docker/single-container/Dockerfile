@@ -99,12 +99,6 @@ RUN set -ex \
 #
 RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livmats/dtool-lookup-webapp.git /app
 
-
-COPY dtool.json /home/dserver/.config/dtool/
-
-COPY docker-entrypoint.d/50-prepare-dserver.sh /docker-entrypoint.d/50-prepare-dserver.sh
-RUN chmod +x /docker-entrypoint.d/50-prepare-dserver.sh
-
 # RUN mkdir /keys && chown dservercore /keys
 
 COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
@@ -116,13 +110,18 @@ RUN npm run build
 RUN mkdir -p /data/db
 RUN chown mongodb:mongodb /data/db
 
+COPY dtool.json /home/dserver/.config/dtool/
+
+COPY prepare-dserver.sh /prepare-dserver.sh
+RUN chmod +x /prepare-dserver.sh
+
 COPY wsgi.py /dserver/wsgi.py
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Setze die Umgebungsvariablen aus der Compose-Datei
-ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres@localhost:5432/dtool \
+ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/dtool \
     SEARCH_MONGO_URI=mongodb://localhost:27017/ \
     SEARCH_MONGO_DB=dtool_info \
     SEARCH_MONGO_COLLECTION=datasets \
@@ -155,8 +154,14 @@ ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres@localhost:5432/dtool \
     }'
 
 # Exponiere den Port
+
+# dserver
 EXPOSE 5000
+
+# webapp
 EXPOSE 8080
+
+# nginx
 EXPOSE 8888
 
 CMD ["/usr/bin/supervisord", "-n"]

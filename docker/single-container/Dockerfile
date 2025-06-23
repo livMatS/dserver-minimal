@@ -95,34 +95,42 @@ RUN set -ex \
   # smoke test
   && yarn --version
 
-#
-# Checkout web GUI
-#
+# check out web GUI
 RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livmats/dtool-lookup-webapp.git /app
-
-# RUN mkdir /keys && chown dservercore /keys
 
 WORKDIR /app/dtool-lookup-webapp
 RUN npm install
 
 COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
 
+# build web app
 RUN npm run build
 
+# prepare mongo db
 RUN mkdir -p /data/db
 RUN chown mongodb:mongodb /data/db
 
+# copy config file for dserver and internal dtool commands
 COPY dtool.json /root/.config/dtool/
 
+# copy templates for webapp
+COPY dtool-templates/dtool_readme.yml /app/dtool-lookup-webapp/public/data/templates/dtool_readme.yml
+COPY dtool-templates/dtool.json /app/dtool-lookup-webapp/public/data/templates/dtool.json
+
+# copy script for preparing dserver
 COPY prepare-dserver.sh /prepare-dserver.sh
 RUN chmod +x /prepare-dserver.sh
 
+# copy flask app starter script
 COPY wsgi.py /dserver/wsgi.py
+
+# copy nginx configuration file
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# supervisord config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Setze die Umgebungsvariablen aus der Compose-Datei
+# set environment variables to configure flask app
 ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/dtool \
     SEARCH_MONGO_URI=mongodb://localhost:27017/ \
     SEARCH_MONGO_DB=dtool_info \
@@ -155,7 +163,7 @@ ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/dtool 
       ] \
     }'
 
-# Exponiere den Port
+# expose ports
 
 # dserver
 EXPOSE 5000
@@ -166,6 +174,5 @@ EXPOSE 8080
 # nginx
 EXPOSE 8888
 
+# launch al services with supervisord on start up
 CMD ["/usr/bin/supervisord", "-n"]
-# Starte den Dienst (dies muss individuell an deine App angepasst werden)
-# CMD ["python3", "app.py"]

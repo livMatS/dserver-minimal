@@ -32,6 +32,7 @@ RUN apt-get --yes update && apt-get --no-install-recommends --yes install python
     pip install --break-system-packages dserver-direct-mongo-plugin && \
     pip install --break-system-packages dserver-dependency-graph-plugin && \
     pip install --break-system-packages dserver-notification-plugin && \
+    pip install --break-system-packages dtool-lookup-api && \
     rm -rf /root/.cache/pip && \
     apt-get remove --purge --autoremove -y gcc && \
     rm -rf /var/lib/apt/lists/*
@@ -111,7 +112,7 @@ RUN npm run build
 RUN mkdir -p /data/db
 RUN chown mongodb:mongodb /data/db
 
-COPY dtool.json /home/dserver/.config/dtool/
+COPY dtool.json /root/.config/dtool/
 
 COPY prepare-dserver.sh /prepare-dserver.sh
 RUN chmod +x /prepare-dserver.sh

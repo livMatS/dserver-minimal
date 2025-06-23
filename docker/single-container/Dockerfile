@@ -33,6 +33,7 @@ RUN apt-get --yes update && apt-get --no-install-recommends --yes install python
     pip install --break-system-packages dserver-dependency-graph-plugin && \
     pip install --break-system-packages dserver-notification-plugin && \
     pip install --break-system-packages dtool-lookup-api && \
+    pip install --break-system-packages dtool-lookup-client && \
     rm -rf /root/.cache/pip && \
     apt-get remove --purge --autoremove -y gcc && \
     rm -rf /var/lib/apt/lists/*
@@ -101,7 +102,12 @@ RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livma
 WORKDIR /app/dtool-lookup-webapp
 RUN npm install
 
+# copy environment variables for building web app
 COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
+
+# copy templates for web app
+COPY dtool-templates/dtool_readme.yml /app/dtool-lookup-webapp/public/data/templates/dtool_readme.yml
+COPY dtool-templates/dtool.json /app/dtool-lookup-webapp/public/data/templates/dtool.json
 
 # build web app
 RUN npm run build
@@ -112,10 +118,6 @@ RUN chown mongodb:mongodb /data/db
 
 # copy config file for dserver and internal dtool commands
 COPY dtool.json /root/.config/dtool/
-
-# copy templates for webapp
-COPY dtool-templates/dtool_readme.yml /app/dtool-lookup-webapp/public/data/templates/dtool_readme.yml
-COPY dtool-templates/dtool.json /app/dtool-lookup-webapp/public/data/templates/dtool.json
 
 # copy script for preparing dserver
 COPY prepare-dserver.sh /prepare-dserver.sh

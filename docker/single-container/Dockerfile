@@ -25,7 +25,7 @@ RUN apt-get --yes update && apt-get --no-install-recommends --yes install python
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     pip install --break-system-packages -U pip  && \
     pip install --break-system-packages gunicorn psycopg2 setuptools_scm && \
-    pip install --break-system-packages git+https://github.com/jic-dtool/dservercore.git@2025-02-27-dependency-fixes && \
+    pip install --break-system-packages dservercore && \
     pip install --break-system-packages dserver-search-plugin-mongo && \
     pip install --break-system-packages dserver-retrieve-plugin-mongo && \
     pip install --break-system-packages dtool-cli dtool-info dtool-create dtool-s3 && \

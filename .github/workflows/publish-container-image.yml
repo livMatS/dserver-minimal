@@ -1,4 +1,4 @@
-name: publish
+name: publish-container-image
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   publish:
-    uses: livMatS/dserver-minimal/.github/workflows/generic-container-publication.yml@main
+    uses: livMatS/dserver-minimal/.github/workflows/generic-container-image-publication.yml@main
     with:
       image: ghcr.io/livmats/dserver-minimal
       docker_file: ./docker/single-container/Dockerfile 

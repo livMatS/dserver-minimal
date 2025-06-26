@@ -1,0 +1,23 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  publish:
+    uses: livMatS/dserver-minimal/.github/workflows/generic-container-publication.yml@main
+    with:
+      image: ghcr.io/livmats/dserver-minimal
+      docker_file: ./docker/single-container/Dockerfile 
+      docker_context: ./docker/single-container 
+      registry: ghcr.io
+    secrets:
+      REGISTRY_USERNAME: ${{ github.actor }}
+      REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}

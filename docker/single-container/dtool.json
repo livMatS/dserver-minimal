@@ -1,0 +1,6 @@
+{
+  "DSERVER_URL": "http://localhost:5000",
+  "DSERVER_USERNAME": "test-user",
+  "DSERVER_PASSWORD": "test-password",
+  "DSERVER_VERIFY_SSL": "false"
+}

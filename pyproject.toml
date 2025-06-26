@@ -12,9 +12,9 @@ authors = [
     {name = "Johannes L. Hörmann", email = "johannes.laurin@gmail.com"}
 ]
 dependencies = [
-      "dservercore>=0.21.0",
-      "dserver-search-plugin-mongo>=0.4.0",
-      "dserver-retrieve-plugin-mongo>=0.4.0",
+      "dservercore>=0.22.0",
+      "dserver-search-plugin-mongo>=0.4.2",
+      "dserver-retrieve-plugin-mongo>=0.4.2",
     ]
 dynamic = ["version"]
 

@@ -1,0 +1,8 @@
+{
+  "DSERVER_URL": "https://localhost:8888/lookup",
+  "DSERVER_USERNAME": "test-user",
+  "DSERVER_VERIFY_SSL": false,
+  "DTOOL_README_TEMPLATE_FPATH": "/path/to/.dtool_readme.yml",
+  "DTOOL_USER_EMAIL": "you@your-dept.your-institution",
+  "DTOOL_USER_FULL_NAME": "Your full name"
+}

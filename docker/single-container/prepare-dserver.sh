@@ -13,6 +13,11 @@ openssl rsa -in /keys/jwt_key -pubout -outform PEM -out /keys/jwt_key.pub
 DATA_DIR="/tmp/data"
 mkdir -p ${DATA_DIR}
 
+if [ ! -d migrations ]; then
+    echo "-> Initialize database..."
+    flask db init
+fi
+
 echo "-> Migrating database..."
 flask db migrate
 flask db upgrade

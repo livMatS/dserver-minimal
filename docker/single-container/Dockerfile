@@ -4,7 +4,7 @@ FROM nginx:1.27.4-bookworm
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION 18.11.0
+ENV NODE_VERSION=18.11.0
 ENV FLASK_APP=dservercore
 
 RUN apt-get --yes update && \
@@ -76,7 +76,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && node --version \
   && npm --version
 
-ENV YARN_VERSION 1.22.19
+ENV YARN_VERSION=1.22.19
 
 RUN set -ex \
   && for key in \

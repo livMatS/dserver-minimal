@@ -70,3 +70,16 @@ curl --insecure -H "Content-Type: application/json" \
    -X POST -d '{"username": "test-user", "password": "test-password" }' \
    http://localhost:5001/token
 ```
+
+## Single container
+
+The subfolder `single-container` contains a complete *dserver* setup within a single container. Build with
+
+    docker build -t livmats/dserver-minimal docker/single-container
+
+and run with
+
+    docker run -v $(pwd)/sample-datasets:/tmp/data:ro -p 8888:8888 livmats/dserver-minimal
+
+to build an index oer datasets in local folder  $(pwd)/sample-datasets`.
+ 

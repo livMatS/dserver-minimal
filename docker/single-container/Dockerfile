@@ -55,7 +55,7 @@ RUN npm install && npm run build
 # python:3.12-slim (Debian bookworm) gives a modern Python without the
 # externally-managed-environment hack; Postgres/Mongo/nginx come from apt.
 # -----------------------------------------------------------------------------
-FROM python:3.12-slim-bookworm
+FROM python:3.14-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \

@@ -35,6 +35,10 @@ Changed
   (``linux/amd64,linux/arm64``), uses the GitHub Actions build cache, and pushes
   to the registry given by the ``registry`` input (previously misnamed, so login
   silently fell back to Docker Hub)
+- Fixed the ``containers`` build-test: the ``dserver_devel`` image failed to
+  build because ``setuptools_scm`` ran git against ``/app`` (owned by the
+  ``dserver`` user) as root and git rejected it as "dubious ownership"; mark
+  ``/app`` a safe directory and check out full history/tags (``fetch-depth: 0``)
 - CI workflows modernized: ``containers.yml`` uses ``docker/metadata-action``
   (renamed from the deprecated ``crazy-max/ghaction-docker-meta``) and the
   GitHub Actions build cache; ``publish-python-package.yml`` publishes via PyPI

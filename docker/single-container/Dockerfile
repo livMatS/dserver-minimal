@@ -80,8 +80,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Python stack: dserver core + plugins from git main, dtool CLIs from PyPI
-# (binary psycopg2 wheel → no compiler needed; git → clone from GitHub).
+# Python stack: dserver core + plugins and the dtool stack from their GitHub
+# default branches (binary psycopg2 wheel → no compiler; git → clone from GitHub).
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt \
     && rm -f /tmp/requirements.txt

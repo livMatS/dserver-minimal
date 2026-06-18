@@ -17,15 +17,15 @@ Flask==2.3.3
 Werkzeug==2.3.8
 marshmallow<4
 
-# dtool CLI for creating/indexing datasets inside the container (PyPI, pinned).
-dtool-cli==0.7.1
-dtool-info==0.16.2
-dtool-create==0.23.4
-dtool-s3==0.14.1
-
-# Python lookup API/client, handy for poking the running server (PyPI, pinned).
-dtool-lookup-api==0.10.3
-dtool-lookup-client==0.1.0
+# dtool core, CLI, and lookup client/API, also from the default (main/master)
+# branches of their GitHub repositories (pip uses each repo's default branch).
+dtoolcore @ git+https://github.com/jic-dtool/dtoolcore.git
+dtool-cli @ git+https://github.com/jic-dtool/dtool-cli.git
+dtool-info @ git+https://github.com/jic-dtool/dtool-info.git
+dtool-create @ git+https://github.com/jic-dtool/dtool-create.git
+dtool-s3 @ git+https://github.com/jic-dtool/dtool-s3.git
+dtool-lookup-api @ git+https://github.com/livMatS/dtool-lookup-api.git
+dtool-lookup-client @ git+https://github.com/jic-dtool/dtool-lookup-client.git
 
 # Runtime: WSGI server + Postgres driver (binary wheel → no gcc needed).
 gunicorn==26.0.0

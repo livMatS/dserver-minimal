@@ -116,8 +116,9 @@ to `ghcr.io/livmats/dserver-minimal` by `publish-container-image.yml`.
   incl. `VUE_APP_AUTH_ENABLED=false`) is baked into the bundle.
 - Runtime stage (`python:3.12-slim-bookworm`) apt-installs nginx + PostgreSQL +
   MongoDB 8.0 + supervisor + git, then `pip install`s `requirements.txt`: the
-  dserver **core and plugins from their GitHub `main` branches** (latest dev
-  state, intentionally unpinned) plus pinned dtool CLIs and a Flask-stack
+  dserver **core and plugins plus the dtool stack from their GitHub default
+  branches** (`jic-dtool/*` on `master`, `livMatS/*` on `main`; latest dev
+  state, intentionally unpinned) and a Flask-stack
   compatibility cap (`Flask==2.3.3`/`Werkzeug==2.3.8`/`marshmallow<4` — without
   it the resolver pulls marshmallow 4 / Werkzeug 3 and drags `flask-smorest`
   down to an ancient `MethodViewType`-importing release). `psycopg2-binary` so

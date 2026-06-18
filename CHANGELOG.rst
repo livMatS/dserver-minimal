@@ -22,7 +22,9 @@ Changed
   dependency) is compiled in a throwaway Node stage and served as a static
   bundle by nginx; the runtime image is ``python:3.12-slim`` and no longer ships
   the Node/Yarn toolchain
-- Single-container installs the dserver core and plugins from the ``main``
+- Single-container installs the dserver core and plugins as well as the dtool
+  stack (``dtoolcore``, ``dtool-cli``, ``dtool-info``, ``dtool-create``,
+  ``dtool-s3``, ``dtool-lookup-api``, ``dtool-lookup-client``) from the default
   branches of their GitHub repositories via ``requirements.txt``; transitive
   Flask-stack dependencies are capped (``Flask``/``Werkzeug``/``marshmallow``)
   to keep the resolution coherent

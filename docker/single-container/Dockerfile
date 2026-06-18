@@ -16,7 +16,7 @@
 # companion library is built first and linked in. Tracks the upstream branches
 # by default; override CLIENT_JS_REF / WEBAPP_REF with a commit SHA to pin.
 # -----------------------------------------------------------------------------
-FROM node:20-bookworm-slim AS webapp-builder
+FROM node:26-bookworm-slim AS webapp-builder
 
 ARG CLIENT_JS_REF=main
 ARG WEBAPP_REF=master

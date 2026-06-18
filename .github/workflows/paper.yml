@@ -1,6 +1,14 @@
 name: paper
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    paths:
+      - 'paper/**'
+      - '.github/workflows/paper.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   paper:

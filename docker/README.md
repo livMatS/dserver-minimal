@@ -73,7 +73,12 @@ curl --insecure -H "Content-Type: application/json" \
 
 ## Single container
 
-The subfolder `single-container` contains a complete *dserver* setup within a single container. Build with
+The subfolder `single-container` contains a complete *dserver* setup — PostgreSQL,
+MongoDB, the dserver REST API, and the Vue web GUI — within a single container,
+fronted by nginx. This is a demo/evaluation artifact: it embeds its own databases,
+disables authentication, and ships throwaway credentials. Do not deploy it as-is.
+
+Build with
 
     docker build -t livmats/dserver-minimal docker/single-container
 
@@ -81,5 +86,20 @@ and run with
 
     docker run -v $(pwd)/sample-datasets:/tmp/data:ro -p 8888:8888 livmats/dserver-minimal
 
-to build an index oer datasets in local folder  $(pwd)/sample-datasets`.
+to index the datasets in the local folder `$(pwd)/sample-datasets`. Then open:
+
+- Web GUI: <http://localhost:8888/>
+- REST API: <http://localhost:8888/lookup> (Swagger at `/lookup/doc/swagger`)
+- Health check: <http://localhost:8888/lookup/config/health>
+- Installed plugins and versions: <http://localhost:8888/lookup/config/versions>
+
+The image is built multi-stage. The web GUI tracks the `master` branch of
+[`jic-dtool/dtool-lookup-webapp`](https://github.com/jic-dtool/dtool-lookup-webapp)
+and its `dserver-client-js` dependency; pin them to specific commits for
+reproducible builds with
+
+    docker build \
+      --build-arg WEBAPP_REF=<commit-sha> \
+      --build-arg CLIENT_JS_REF=<commit-sha> \
+      -t livmats/dserver-minimal docker/single-container
  

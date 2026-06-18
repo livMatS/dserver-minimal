@@ -1,0 +1,32 @@
+# Python dependencies for the single-container dserver image.
+#
+# The dserver core and plugins are installed from the main branch of their
+# GitHub repositories (latest development state, intentionally not pinned).
+dservercore @ git+https://github.com/jic-dtool/dservercore.git
+dserver-search-plugin-mongo @ git+https://github.com/jic-dtool/dserver-search-plugin-mongo.git
+dserver-retrieve-plugin-mongo @ git+https://github.com/jic-dtool/dserver-retrieve-plugin-mongo.git
+dserver-direct-mongo-plugin @ git+https://github.com/livMatS/dserver-direct-mongo-plugin.git
+dserver-dependency-graph-plugin @ git+https://github.com/livMatS/dserver-dependency-graph-plugin.git
+dserver-notification-plugin @ git+https://github.com/livMatS/dserver-notification-plugin.git
+
+# Flask ecosystem compatibility caps. dservercore leaves Flask/Werkzeug/marshmallow
+# unbounded; 2026-era latest Werkzeug 3 + marshmallow 4 break the resolution and
+# drag flask-smorest down to an ancient release that imports the long-removed
+# flask.views.MethodViewType. These caps keep the stack coherent.
+Flask==2.3.3
+Werkzeug==2.3.8
+marshmallow<4
+
+# dtool core, CLI, and lookup client/API, also from the default (main/master)
+# branches of their GitHub repositories (pip uses each repo's default branch).
+dtoolcore @ git+https://github.com/jic-dtool/dtoolcore.git
+dtool-cli @ git+https://github.com/jic-dtool/dtool-cli.git
+dtool-info @ git+https://github.com/jic-dtool/dtool-info.git
+dtool-create @ git+https://github.com/jic-dtool/dtool-create.git
+dtool-s3 @ git+https://github.com/jic-dtool/dtool-s3.git
+dtool-lookup-api @ git+https://github.com/livMatS/dtool-lookup-api.git
+dtool-lookup-client @ git+https://github.com/jic-dtool/dtool-lookup-client.git
+
+# Runtime: WSGI server + Postgres driver (binary wheel → no gcc needed).
+gunicorn==26.0.0
+psycopg2-binary==2.9.12

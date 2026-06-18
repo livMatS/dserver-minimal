@@ -1,138 +1,108 @@
-FROM nginx:1.27.4-bookworm
+# =============================================================================
+# dserver single-container image
+#
+# A whole dserver stack (PostgreSQL + MongoDB + dserver REST API + Vue web GUI)
+# in one image, fronted by nginx on port 8888. Demo/evaluation artifact only:
+# embedded databases, disabled auth, throwaway credentials.
+#
+#   docker build -t livmats/dserver-minimal docker/single-container
+#   docker run -v $(pwd)/sample-datasets:/tmp/data:ro -p 8888:8888 livmats/dserver-minimal
+# =============================================================================
 
-# from node:18 Dockerfile, https://github.com/nodejs/docker-node/blob/4c8c98eaf121d6d1002a85d055d07aa91e2c9914/18/buster/Dockerfile
-RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+# -----------------------------------------------------------------------------
+# Stage 1: build the static web GUI (discarded from the final image).
+#
+# The webapp has a local `file:` dependency on dserver-client-js, so that
+# companion library is built first and linked in. Tracks the upstream branches
+# by default; override CLIENT_JS_REF / WEBAPP_REF with a commit SHA to pin.
+# -----------------------------------------------------------------------------
+FROM node:20-bookworm-slim AS webapp-builder
 
-ENV NODE_VERSION=18.11.0
-ENV FLASK_APP=dservercore
+ARG CLIENT_JS_REF=main
+ARG WEBAPP_REF=master
 
-RUN apt-get --yes update && \
-    apt-get --no-install-recommends --yes install gpg && \
-    curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
-    gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
-   --dearmor && \
-   echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list && \
-    apt-get --yes update && \
-    apt-get --no-install-recommends --yes install mongodb-org && \
-    apt-get --no-install-recommends --yes install \
-        git dirmngr gpg-agent xz-utils supervisor \
-        gcc libc6-dev libpq-dev postgresql postgresql-client
+# git to fetch sources; build-essential/python3 for any native node addons.
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        git ca-certificates build-essential python3 \
+    && rm -rf /var/lib/apt/lists/*
 
-        
+# Build the JS client library the webapp depends on.
+RUN git clone --depth 1 --branch ${CLIENT_JS_REF} \
+        https://github.com/livMatS/dserver-client-js.git /dserver-client-js
+WORKDIR /dserver-client-js
+RUN npm install && npm run build
 
-RUN apt-get --yes update && apt-get --no-install-recommends --yes install python3 python3-pip python3-dev && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    pip install --break-system-packages -U pip  && \
-    pip install --break-system-packages gunicorn psycopg2 setuptools_scm && \
-    pip install --break-system-packages dservercore && \
-    pip install --break-system-packages dserver-search-plugin-mongo && \
-    pip install --break-system-packages dserver-retrieve-plugin-mongo && \
-    pip install --break-system-packages dtool-cli dtool-info dtool-create dtool-s3 && \
-    pip install --break-system-packages dserver-direct-mongo-plugin && \
-    pip install --break-system-packages dserver-dependency-graph-plugin && \
-    pip install --break-system-packages dserver-notification-plugin && \
-    pip install --break-system-packages dtool-lookup-api && \
-    pip install --break-system-packages dtool-lookup-client && \
-    rm -rf /root/.cache/pip && \
-    apt-get remove --purge --autoremove -y gcc && \
-    rm -rf /var/lib/apt/lists/*
+# Fetch the webapp (the Vue app lives in a subdirectory of the repo).
+RUN git clone --depth 1 --branch ${WEBAPP_REF} \
+        https://github.com/jic-dtool/dtool-lookup-webapp.git /tmp/webapp-src
+WORKDIR /webapp
+# Rewrite the local dependency path and drop the committed lockfile: it pins
+# dserver-client to the original relative path, and npm crashes on the mismatch
+# ("Cannot read properties of undefined (reading 'extraneous')"). npm install
+# regenerates a fresh lockfile against the rewritten path.
+RUN cp -a /tmp/webapp-src/dtool-lookup-webapp/. /webapp/ \
+    && sed -i 's|file:../../dserver-client-js|file:/dserver-client-js|g' package.json \
+    && rm -f package-lock.json
 
+# Bake build-time configuration, install, and produce the static bundle in dist/.
+COPY webapp.env /webapp/.env
+RUN npm install && npm run build
 
-RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
-  && case "${dpkgArch##*-}" in \
-    amd64) ARCH='x64';; \
-    ppc64el) ARCH='ppc64le';; \
-    s390x) ARCH='s390x';; \
-    arm64) ARCH='arm64';; \
-    armhf) ARCH='armv7l';; \
-    i386) ARCH='x86';; \
-    *) echo "unsupported architecture"; exit 1 ;; \
-  esac \
-  # gpg keys listed at https://github.com/nodejs/node#release-keys
-  && set -ex \
-  && for key in \
-    4ED778F539E3634C779C87C6D7062848A1AB005C \
-    141F07595B7B3FFE74309A937405533BE57C7D57 \
-    74F12602B6F1C4E913FAA37AD3A89613643B6201 \
-    61FC681DFB92A079F1685E77973F295594EC4689 \
-    8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-    890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
-    C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
-    108F52B48DB57BB0CC439B2997B01419BD92F80A \
-  ; do \
-      gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-  && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-  # smoke tests
-  && node --version \
-  && npm --version
+# -----------------------------------------------------------------------------
+# Stage 2: runtime image.
+#
+# python:3.12-slim (Debian bookworm) gives a modern Python without the
+# externally-managed-environment hack; Postgres/Mongo/nginx come from apt.
+# -----------------------------------------------------------------------------
+FROM python:3.12-slim-bookworm
 
-ENV YARN_VERSION=1.22.19
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PG_VERSION=15 \
+    FLASK_APP=dservercore
 
-RUN set -ex \
-  && for key in \
-    6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-    gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-    gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && mkdir -p /opt \
-  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  # smoke test
-  && yarn --version
+# System services: nginx, PostgreSQL, MongoDB 8.0, supervisor.
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends gnupg curl ca-certificates \
+    && curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc \
+        | gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor \
+    && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" \
+        > /etc/apt/sources.list.d/mongodb-org-8.0.list \
+    && apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        nginx \
+        postgresql postgresql-client \
+        mongodb-org \
+        supervisor \
+        openssl \
+        git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# check out web GUI
-RUN git clone --depth 1 -b 2025-03-13-no-authentication https://github.com/livmats/dtool-lookup-webapp.git /app
+# Python stack: dserver core + plugins and the dtool stack from their GitHub
+# default branches (binary psycopg2 wheel → no compiler; git → clone from GitHub).
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+    && rm -f /tmp/requirements.txt
 
-WORKDIR /app/dtool-lookup-webapp
-RUN npm install
+# Static web GUI from the builder stage, served directly by nginx.
+COPY --from=webapp-builder /webapp/dist /var/www/dtool-lookup-webapp
 
-# copy environment variables for building web app
-COPY dtool_lookup_webapp.env /app/dtool-lookup-webapp/.env
+# MongoDB data directory.
+RUN mkdir -p /data/db && chown -R mongodb:mongodb /data/db
 
-# copy templates for web app
-COPY dtool-templates/dtool_readme.yml /app/dtool-lookup-webapp/public/data/templates/dtool_readme.yml
-COPY dtool-templates/dtool.json /app/dtool-lookup-webapp/public/data/templates/dtool.json
-
-# build web app
-RUN npm run build
-
-# prepare mongo db
-RUN mkdir -p /data/db
-RUN chown mongodb:mongodb /data/db
-
-# copy config file for dserver and internal dtool commands
-COPY dtool.json /root/.config/dtool/
-
-# copy script for preparing dserver
-COPY prepare-dserver.sh /prepare-dserver.sh
-RUN chmod +x /prepare-dserver.sh
-
-# copy flask app starter script
-COPY wsgi.py /dserver/wsgi.py
-
-# copy nginx configuration file
+# Configuration and helper scripts.
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# supervisord config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY prepare-dserver.sh /prepare-dserver.sh
+COPY wsgi.py /dserver/wsgi.py
+RUN mkdir -p /root/.config/dtool
+COPY dtool.json /root/.config/dtool/dtool.json
+RUN chmod +x /prepare-dserver.sh \
+    && rm -f /etc/nginx/sites-enabled/default
 
-# set environment variables to configure flask app
+# dserver configuration (all via environment; override at `docker run` as needed).
 ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/dtool \
     SEARCH_MONGO_URI=mongodb://localhost:27017/ \
     SEARCH_MONGO_DB=dtool_info \
@@ -140,43 +110,24 @@ ENV SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/dtool 
     RETRIEVE_MONGO_URI=mongodb://localhost:27017/ \
     RETRIEVE_MONGO_DB=dtool_info \
     RETRIEVE_MONGO_COLLECTION=datasets \
-    DSERVER_MONGO_URI=mongodb://localhost:27017/ \
-    DSERVER_MONGO_DB=dtool_info \
-    DSERVER_MONGO_COLLECTION=metadata \
+    MONGO_URI=mongodb://localhost:27017/ \
+    MONGO_DB=dtool_info \
+    MONGO_COLLECTION=metadata \
     DSERVER_ALLOW_DIRECT_QUERY=True \
     DSERVER_ALLOW_DIRECT_AGGREGATION=True \
     DSERVER_ENABLE_DEPENDENCY_VIEW=True \
-    DSERVER_DEPENDENCY_KEYS=["readme.derived_from.uuid","annotations.source_dataset_uuid"] \
+    DSERVER_DYNAMIC_DEPENDENCY_KEYS=True \
     DISABLE_JWT_AUTHORISATION=True \
     DEFAULT_USER=test-user \
-    DUMP_HTTP_REQUESTS=True \
+    DUMP_HTTP_REQUESTS=False \
     LOGLEVEL=DEBUG \
-    MONGO_DATA_DIR=/data/db \
-    POSTGRES_PORT=5432 \
-    POSTGRES_DB=dtool \
-    POSTGRES_USER=postgres \
-    POSTGRES_PASSWORD="" \
     SCRIPT_NAME=/lookup \
-    API_SPEC_OPTIONS='{ \
-      "x-internal-id": "2", \
-      "servers": [ \
-        { \
-        "url": "http://localhost:8888/lookup", \
-        "description": "dserver" \
-        } \
-      ] \
-    }'
+    API_SPEC_OPTIONS='{ "x-internal-id": "2", "servers": [ { "url": "http://localhost:8888/lookup", "description": "dserver" } ] }'
 
-# expose ports
-
-# dserver
-EXPOSE 5000
-
-# webapp
-EXPOSE 8080
-
-# nginx
+# nginx is the only port that needs publishing.
 EXPOSE 8888
 
-# launch al services with supervisord on start up
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=5 \
+    CMD curl -sf http://localhost:8888/lookup/config/health || exit 1
+
 CMD ["/usr/bin/supervisord", "-n"]

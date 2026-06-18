@@ -1,5 +1,5 @@
 name: containers
-# tests whether container
+# Build-test the dserver_devel image on push/PR (no push to a registry).
 
 on:
   push:
@@ -12,6 +12,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,27 +23,20 @@ jobs:
 
     - name: checkout
       uses: actions/checkout@v5
+      with:
+        # full history + tags so setuptools_scm can derive the version
+        fetch-depth: 0
 
     - name: docker meta
       id: docker_meta
-      uses: crazy-max/ghaction-docker-meta@v5.8.0
+      uses: docker/metadata-action@v5.8.0
       with:
-        images: ${{ inputs.image }}
+        images: local/dserver-devel
         tags: |
           type=raw,value=sha-${{ github.sha }}
 
     - name: set up docker buildx
       uses: docker/setup-buildx-action@v3
-
-    - name: cache docker layers
-      uses: actions/cache@v4.3.0
-      env:
-        cache-name: cache-docker-layers
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx
-        restore-keys: |
-          ${{ runner.os }}-buildx
 
     - name: build
       uses: docker/build-push-action@v6
@@ -51,13 +47,5 @@ jobs:
         tags: ${{ steps.docker_meta.outputs.tags }}
         labels: ${{ steps.docker_meta.outputs.labels }}
         outputs: type=docker, dest=/tmp/image.tar
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-    - name: move cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-    - name: image digest
-      run: echo ${{ steps.docker_build.outputs.digest }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max

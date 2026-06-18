@@ -8,8 +8,12 @@ WORKDIR /app
 
 ENV FLASK_APP=dservercore
 
+# /app is copied owned by the dserver user but this RUN executes as root, so git
+# (used by setuptools_scm to derive the version) rejects it as "dubious
+# ownership" unless it is marked safe.
 RUN apt-get --yes update && \
     apt-get --no-install-recommends --yes install gcc libc6-dev libpq-dev git curl && \
+    git config --global --add safe.directory /app && \
     pip install -U pip  && \
     pip install gunicorn  psycopg2 setuptools_scm && \
     pip install --break-system-packages . && \

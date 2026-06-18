@@ -35,6 +35,13 @@ Changed
   (``linux/amd64,linux/arm64``), uses the GitHub Actions build cache, and pushes
   to the registry given by the ``registry`` input (previously misnamed, so login
   silently fell back to Docker Hub)
+- CI workflows modernized: ``containers.yml`` uses ``docker/metadata-action``
+  (renamed from the deprecated ``crazy-max/ghaction-docker-meta``) and the
+  GitHub Actions build cache; ``publish-python-package.yml`` publishes via PyPI
+  Trusted Publishing (OIDC) instead of long-lived tokens and builds on Python
+  3.12 (was end-of-life 3.8); least-privilege ``permissions`` blocks added; the
+  JOSS ``paper`` workflow only runs on ``paper/`` changes; Dependabot now also
+  tracks Docker base images
 
 [0.3.0]
 -------

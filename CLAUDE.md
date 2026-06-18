@@ -152,6 +152,12 @@ via `--build-arg WEBAPP_REF=<sha>` / `CLIENT_JS_REF=<sha>`.
   publishes to PyPI, `publish-container-image.yml` pushes container images. CI
   (`containers.yml`) only builds `docker/dserver_devel/Dockerfile` on push/PR —
   there are no unit tests in CI.
+- **PyPI publishing uses Trusted Publishing (OIDC)** — no API tokens. It needs a
+  one-time trusted-publisher setup on each index (project → Publishing): owner
+  `livMatS`, repo `dserver-minimal`, workflow `publish-python-package.yml`, and
+  the GitHub **environment name** the publish job declares — `pypi` on PyPI,
+  `testpypi` on TestPyPI. The `publish-pypi` / `publish-testpypi` jobs set those
+  `environment:` names; without the matching trusted publisher, releases fail.
 - Every change goes under the `[unpublished]` section of `CHANGELOG.rst`
   (Keep a Changelog format, semantic versioning).
 - The `devel/` and `docker/devel.yml` / `single-container` setups use

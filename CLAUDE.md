@@ -100,6 +100,43 @@ make -C docs html
 via myst-parser — keep development instructions in those READMEs, not duplicated
 in the `.rst`.
 
+## Single-container image (`docker/single-container/`)
+
+The "try dserver with one `docker run`" artifact — a whole stack (PostgreSQL +
+MongoDB + dserver API + Vue web GUI) inside **one** image fronted by nginx on
+port **8888**. Distinct from the multi-service `docker compose` setups; published
+to `ghcr.io/livmats/dserver-minimal` by `publish-container-image.yml`.
+
+**Build (`Dockerfile`)** layers four toolchains onto `nginx:1.27.4-bookworm`:
+MongoDB 8.0 (mongodb.org apt repo) + PostgreSQL + Python; the full Python stack
+(`dservercore` plus **all** plugins — direct-mongo, dependency-graph,
+notification — and the `dtool` CLIs/APIs, installed with
+`--break-system-packages`); Node 18.11 + Yarn (GPG-verified tarballs) used only
+to `npm run build` the webapp, cloned from a pinned branch of
+`livmats/dtool-lookup-webapp`. It is a single-stage, feature-maximal,
+**unpinned** build (latest packages at build time → not reproducible).
+
+**Runtime** is `supervisord` running five programs in one container: postgresql
+(hardcoded pg-15 paths), mongodb, nginx, node (`npm run serve`), and dserver
+(gunicorn on `:5000`), plus a one-shot `prepare-dserver.sh` dressed as a service
+(`startretries=999999`, `exitcodes=0` → retried until it exits 0).
+`prepare-dserver.sh` sets the postgres password, runs `flask db init/migrate/upgrade`,
+registers base URI `file://$HOSTNAME/tmp/data`, creates `test-user`, and indexes
+it. Mount datasets read-only at `/tmp/data`.
+
+**Routing**: nginx 8888 sends `/lookup` → dserver `:5000` (prefix **not**
+stripped; dserver runs with `SCRIPT_NAME=/lookup`) and `/` → webapp `:8080`.
+Auth is disabled (`DISABLE_JWT_AUTHORISATION=True` + `DEFAULT_USER=test-user`).
+
+**Known issues** (demo-grade, not production):
+- The Dockerfile `npm run build`s the webapp, but supervisord serves it with
+  `npm run serve` (Vue dev server) — the production bundle is unused.
+- `prepare-dserver.sh` runs `flask db migrate` (autogenerate) on every boot,
+  not just `upgrade` — fragile against a live DB.
+- No package pinning → builds drift over time, unlike the meta-package pins.
+- DB + Mongo + app + GUI in one container with disabled auth and throwaway
+  credentials — eval/demo only.
+
 ## Conventions
 
 - **Versioning** is `setuptools_scm`-driven from git tags (`local_scheme =
